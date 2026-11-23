@@ -417,11 +417,13 @@ def write_png(c, path):
 
 def main():
     canvas = build()
-    os.makedirs("/output", exist_ok=True)
-    png = write_png(canvas, "/output/entry.png")
-    with open("entry.png", "wb") as f:
-        f.write(png)
-    print("wrote /output/entry.png and entry.png")
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
+    os.makedirs(out_dir, exist_ok=True)
+    png = write_png(canvas, os.path.join(out_dir, "entry.png"))
+    if "MAKEFUN_OUTPUT_DIR" not in os.environ:
+        with open("entry.png", "wb") as f:
+            f.write(png)
+    print("wrote %s/entry.png" % out_dir)
     print("size: %dx%d px, %d bytes" % (W, H, len(png)))
     print("sha256: %s" % hashlib.sha256(png).hexdigest())
 
